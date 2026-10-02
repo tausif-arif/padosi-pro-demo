@@ -1,0 +1,50 @@
+name: padosipro_demo
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: padosipro-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: padosipro
+    ports:
+      # Exposed so you can also point the mobile app or psql at the same DB.
+      - "5432:5432"
+    volumes:
+      - padosipro-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d padosipro"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: padosipro-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./server/.env
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      API_BASE_URL: http://localhost:4000
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/padosipro?schema=public
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-please-32chars}
+      JWT_EXPIRES_IN: 7d
+      OTP_LENGTH: "6"
+      OTP_TTL_MINUTES: "10"
+      OTP_MAX_ATTEMPTS: "5"
+      OTP_RESEND_COOLDOWN_SECONDS: "30"
+      BCRYPT_SALT_ROUNDS: "10"
+    ports:
+      - "4000:4000"
+
+volumes:
+  padosipro-db-data:
