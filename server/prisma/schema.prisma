@@ -1,0 +1,83 @@
+// PadosiPro data model.
+// Table and column names are snake_case to match the assignment spec and keep
+// the SQL readable for anyone who joins the team and opens a psql session.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  isVerified   Boolean  @default(false) @map("is_verified")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  otps      EmailOtp[]
+  profile   Profile?
+  userTasks UserTask[]
+
+  @@map("users")
+}
+
+model EmailOtp {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  otpHash    String   @map("otp_hash")
+  attempts   Int      @default(0)
+  expiresAt  DateTime @map("expires_at")
+  lastSentAt DateTime @map("last_sent_at")
+  consumedAt DateTime? @map("consumed_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("email_otps")
+}
+
+model Profile {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @unique @map("user_id") @db.Uuid
+  name         String
+  mobileNumber String   @map("mobile_number")
+  address      String
+  businessName String?  @map("business_name")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Task {
+  id          String @id @default(uuid()) @db.Uuid
+  category    String
+  title       String @unique
+  description String
+
+  selectedBy UserTask[]
+
+  @@index([category])
+  @@map("tasks")
+}
+
+model UserTask {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  taskId    String   @map("task_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  // Makes "save my selection" idempotent: re-submitting the same ids upserts
+  // instead of failing, and guarantees one row per user/task pair.
+  @@unique([userId, taskId])
+  @@index([userId])
+  @@map("user_tasks")
+}
