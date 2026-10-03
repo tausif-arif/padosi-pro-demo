@@ -1,7 +1,5 @@
 # PadosiPro Assignment
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
-
 Hey! This is my submission for the PadosiPro assignment. It's a full-stack project with a React Native (Expo) mobile app and a Node.js/PostgreSQL backend.
 
 ## Quick Start (Backend)
@@ -19,7 +17,7 @@ The backend is built with Express and Prisma.
    ```
 6. Start the server: `npm run dev` (runs on port 3000)
 
-**Note on Emails:** I used Ethereal to catch the OTP emails locally without dealing with actual SMTP limits. When you trigger an OTP, check the backend console – it prints a URL where you can view the fake email and get the 6-digit code.
+**Note on Emails:** I've set up real SMTP for the OTP emails, so they do work! But since free SMTP servers (like Gmail) sometimes rate-limit or drop emails during testing, I added a quick bypass code. If the email doesn't arrive right away, just type `999999` on the OTP screen and it will let you right in.
 
 ## Quick Start (Mobile App)
 
