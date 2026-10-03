@@ -8,6 +8,8 @@ This document covers the tech stack and architectural decisions made for this pr
 
 **Mobile:** React Native with Expo. The project uses a feature-based folder structure (`src/screens/{feature}`) to keep things organized. State management is handled by Zustand since it's minimal, and `expo-secure-store` is used for securely persisting the auth token.
 
+**Frontend Engineering Guidelines:** To maintain a clean and scalable architecture, I included a `RULES.md` file (`client/parosiprodemo/RULES.md`). These represent the strict frontend engineering conventions I use in my current org across all React, Next.js, and React Native projects. I generated this specific document using AI by providing it with my exact architectural instructions and preferences.
+
 ## Architectural Decisions & Trade-offs
 
 1. **JWTs instead of Sessions:** 
