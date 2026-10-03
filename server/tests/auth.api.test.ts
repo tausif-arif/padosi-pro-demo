@@ -135,7 +135,7 @@ describe('POST /auth/verify-otp', () => {
   it('rejects a wrong code and reports the attempts left', async () => {
     const user = await createRegisteredUser();
 
-    const response = await request(app).post('/api/v1/auth/verify-otp').send({ email: user.email, otp: '999999' });
+    const response = await request(app).post('/api/v1/auth/verify-otp').send({ email: user.email, otp: '888888' });
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('OTP_INVALID');

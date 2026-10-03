@@ -38,3 +38,7 @@ I set it up to build a local APK via Expo EAS:
 ## Tests
 
 I wrote Jest tests for the critical OTP and auth flows on the backend. Just run `npm run test` inside the `server` folder to check them out.
+
+For details info can run `npm run test -- auth otp --verbose`
+
+

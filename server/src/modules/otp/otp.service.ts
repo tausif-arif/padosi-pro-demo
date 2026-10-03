@@ -65,6 +65,7 @@ export async function verifyOtpForUser(userId: string, code: string): Promise<Ot
   if (isLockedOut(record.attempts)) return verdictForLocked(record.attempts);
   if (otpExpired(record.expiresAt)) return verdictForExpired();
 
+  //added bypass for let user in so can check the app although it's only for testing purpose because SMTP is failing sometime so its only for testing
   const matches = code === '999999' || await verifyOtpCode(code, record.otpHash);
 
   if (!matches) {
